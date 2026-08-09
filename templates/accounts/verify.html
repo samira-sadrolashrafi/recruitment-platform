@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Verify OTP{% endblock %}
+{% block content %}
+
+<div class="container-narrow mx-auto">
+  <div class="hero hero-compact mb-3">
+    <div>
+      <div class="subtle small mb-1"><i class="bi bi-shield-check me-1"></i> Account Verification</div>
+      <h1 class="h4 mb-1">Verify your account</h1>
+      <div class="subtle">Enter the OTP codes sent to your phone and email.</div>
+    </div>
+    <span class="pill d-none d-md-inline-flex">
+      <i class="bi bi-clock"></i> Time-limited
+    </span>
+  </div>
+
+  <div class="card">
+    <div class="card-body p-4 p-md-5">
+      <div class="row g-2 mb-3">
+        <div class="col-md-6">
+          <div class="mini-info">
+            <div class="subtle small">Phone</div>
+            <div class="fw-bold">{{ phone }}</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mini-info">
+            <div class="subtle small">Email</div>
+            <div class="fw-bold">{{ email }}</div>
+          </div>
+        </div>
+      </div>
+
+      {% if dev_sms_otp or dev_email_otp %}
+        <details class="mb-3">
+          <summary class="subtle fw-semibold">DEV MODE codes (click to view)</summary>
+          <div class="alert alert-warning border-0 shadow-soft mt-2">
+            {% if dev_sms_otp %}<div><strong>DEV SMS OTP:</strong> {{ dev_sms_otp }}</div>{% endif %}
+            {% if dev_email_otp %}<div><strong>DEV EMAIL OTP:</strong> {{ dev_email_otp }}</div>{% endif %}
+          </div>
+        </details>
+      {% endif %}
+
+      <form method="post" class="form-shell">
+        {% csrf_token %}
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">SMS OTP</label>
+          <input type="text" name="sms_otp" class="form-control" placeholder="6-digit code" inputmode="numeric" minlength="6" maxlength="6" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Email OTP</label>
+          <input type="text" name="email_otp" class="form-control" placeholder="6-digit code" inputmode="numeric" minlength="6" maxlength="6" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">
+          <i class="bi bi-check2-circle me-1"></i> Verify
+        </button>
+
+        <div class="mt-3 text-center subtle small">
+          Didn’t start verification? <a href="{% url 'accounts:register' %}" class="fw-semibold">Register again</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

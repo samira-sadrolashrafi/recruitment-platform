@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Edit Job{% else %}Create Job{% endif %}{% endblock %}
+{% block content %}
+
+<div class="container-narrow mx-auto">
+  <div class="hero hero-compact mb-3">
+    <div>
+      <div class="subtle small mb-1"><i class="bi bi-pencil-square me-1"></i> Job Management</div>
+      <h1 class="h4 mb-1">{% if object %}Edit Job{% else %}Create Job{% endif %}</h1>
+      <div class="subtle">Fill the fields carefully. Clear, structured posts get more applicants.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body p-4 p-md-5">
+      <form method="post" novalidate class="form-shell">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger border-0 shadow-soft">
+            <i class="bi bi-x-circle me-2"></i>{{ form.non_field_errors|striptags }}
+          </div>
+        {% endif %}
+
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label fw-semibold">Title</label>
+            {{ form.title }}
+            <div class="text-danger small mt-1">{{ form.title.errors|striptags }}</div>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label fw-semibold">Description</label>
+            {{ form.description }}
+            <div class="text-danger small mt-1">{{ form.description.errors|striptags }}</div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Salary Min</label>
+            {{ form.salary_min }}
+            <div class="text-danger small mt-1">{{ form.salary_min.errors|striptags }}</div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Salary Max</label>
+            {{ form.salary_max }}
+            <div class="text-danger small mt-1">{{ form.salary_max.errors|striptags }}</div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Benefits</label>
+            {{ form.benefits }}
+            <div class="text-danger small mt-1">{{ form.benefits.errors|striptags }}</div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Requirements</label>
+            {{ form.requirements }}
+            <div class="text-danger small mt-1">{{ form.requirements.errors|striptags }}</div>
+          </div>
+
+          <div class="col-12">
+            <div class="form-check form-switch">
+              {{ form.is_active }}
+              <label class="form-check-label fw-semibold" for="{{ form.is_active.id_for_label }}">Active (visible to seekers)</label>
+            </div>
+            <div class="text-danger small mt-1">{{ form.is_active.errors|striptags }}</div>
+          </div>
+
+          <div class="col-12 d-flex gap-2 flex-wrap">
+            <button class="btn btn-primary" type="submit">
+              <i class="bi bi-save me-1"></i> Save
+            </button>
+
+            <a class="btn btn-outline-secondary"
+               href="{% if object %}{% url 'jobs:job-detail' object.pk %}{% else %}{% url 'jobs:job-list' %}{% endif %}">
+              Cancel
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

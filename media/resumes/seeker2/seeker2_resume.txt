@@ -1,0 +1,3 @@
+Name: Seeker2
+Skills: React, TypeScript, HTML/CSS
+Projects: UI dashboards

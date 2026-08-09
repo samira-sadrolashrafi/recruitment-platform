@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% block title %}Jobs{% endblock %}
+{% block content %}
+
+<div class="row g-3">
+  <div class="col-lg-8">
+
+    <div class="hero mb-3">
+      <div>
+        <div class="subtle small mb-1"><i class="bi bi-globe2 me-1"></i> Marketplace</div>
+        <h1 class="h4 mb-1">Open Jobs</h1>
+        <div class="subtle">Search by title, benefits, and salary range.</div>
+        <div class="subtle small mt-2">
+          {% if page_obj %}
+            Results: <span class="fw-bold">{{ page_obj.paginator.count }}</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 flex-wrap">
+        {% if can_create_job %}
+          <a class="btn btn-primary" href="{% url 'jobs:job-create' %}">
+            <i class="bi bi-plus-lg me-1"></i> Create Job
+          </a>
+        {% endif %}
+        {% if user.is_authenticated and not user.is_employer %}
+          <a class="btn btn-outline-secondary" href="{% url 'applications:upload-resume' %}">
+            <i class="bi bi-upload me-1"></i> Upload Resume
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card flat mb-3">
+      <div class="card-body">
+        <form class="row g-2 align-items-end" method="get">
+          <div class="col-md-4">
+            <label class="form-label fw-semibold mb-1">Title</label>
+            <input class="form-control" name="title" placeholder="e.g. Django Developer" value="{{ request.GET.title }}">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold mb-1">Benefits</label>
+            <input class="form-control" name="benefits" placeholder="e.g. Remote" value="{{ request.GET.benefits }}">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label fw-semibold mb-1">Min</label>
+            <input class="form-control" name="salary_min" placeholder="0" value="{{ request.GET.salary_min }}">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label fw-semibold mb-1">Max</label>
+            <input class="form-control" name="salary_max" placeholder="9999" value="{{ request.GET.salary_max }}">
+          </div>
+          <div class="col-md-1 d-grid">
+            <button class="btn btn-outline-primary">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+          <div class="col-12">
+            <a class="subtle small" href="{% url 'jobs:job-list' %}">
+              <i class="bi bi-arrow-counterclockwise me-1"></i> Reset filters
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {% for job in object_list %}
+      <div class="card job-card mb-3">
+        <div class="card-body">
+          <div class="d-flex justify-content-between gap-3 flex-wrap">
+            <div class="flex-grow-1">
+              <h2 class="h5 mb-1">
+                <a href="{{ job.get_absolute_url }}">{{ job.title }}</a>
+              </h2>
+              <div class="subtle small">
+                <i class="bi bi-building me-1"></i><strong>{{ job.employer.username }}</strong>
+                {% if job.created_at %} • <i class="bi bi-calendar3 me-1"></i>{{ job.created_at|date:"Y-m-d" }}{% endif %}
+              </div>
+            </div>
+
+            <div class="text-end">
+              {% if job.salary_min or job.salary_max %}
+                <span class="badge text-bg-primary">
+                  {% if job.salary_min %}{{ job.salary_min }}{% endif %}
+                  {% if job.salary_max %} - {{ job.salary_max }}{% endif %}
+                </span>
+              {% endif %}
+            </div>
+          </div>
+
+          {% if job.description %}
+            <p class="mt-3 mb-3 clamp-2">{{ job.description }}</p>
+          {% endif %}
+
+          <div class="d-flex gap-2 flex-wrap">
+            <a class="btn btn-sm btn-outline-secondary" href="{{ job.get_absolute_url }}">
+              View details
+            </a>
+
+            {% if user.is_authenticated and not user.is_employer %}
+              <a class="btn btn-sm btn-primary" href="{% url 'applications:apply' job.pk %}">
+                <i class="bi bi-send me-1"></i> Apply
+              </a>
+            {% endif %}
+
+            {% if user.is_authenticated and user == job.employer %}
+              <a class="btn btn-sm btn-outline-primary" href="{% url 'applications:applicants-list' job.pk %}">
+                Applicants
+              </a>
+              <a class="btn btn-sm btn-outline-secondary" href="{% url 'jobs:job-edit' job.pk %}">
+                Edit
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="card flat">
+        <div class="card-body text-center">
+          <div class="empty-state mx-auto">
+            <i class="bi bi-search"></i>
+          </div>
+          <div class="fw-bold mt-2">No jobs found</div>
+          <div class="subtle">Try changing filters or removing salary limits.</div>
+        </div>
+      </div>
+    {% endfor %}
+
+    {% include "partials/pagination.html" %}
+  </div>
+
+  <div class="col-lg-4">
+    <div class="kpi mb-3">
+      <div class="label">Quick tip</div>
+      <div class="value">Use filters like a pro</div>
+      <div class="text-muted small mt-1">Title + benefits + salary range = fast narrowing.</div>
+    </div>
+
+    {% if user.is_authenticated and not user.is_employer %}
+      <div class="card">
+        <div class="card-body">
+          <h5 class="mb-3">Recommended for you</h5>
+          {% for r in recommended_jobs %}
+            <div class="mb-2">
+              <a href="{{ r.get_absolute_url }}" class="fw-semibold">{{ r.title }}</a>
+              <div class="subtle small">{{ r.employer.username }}</div>
+            </div>
+          {% empty %}
+            <p class="text-muted mb-0">No recommendations yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

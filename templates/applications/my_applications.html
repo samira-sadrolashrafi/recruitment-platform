@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}My Applications{% endblock %}
+{% block content %}
+
+<div class="container-narrow mx-auto">
+  <div class="page-title">
+    <div>
+      <h1 class="h4">My Job Applications</h1>
+      <div class="subtle">Track status and download your submitted resumes.</div>
+    </div>
+    <a href="{% url 'jobs:job-list' %}" class="btn btn-outline-secondary">
+      <i class="bi bi-search me-1"></i> Browse Jobs
+    </a>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Job</th>
+              <th>Status</th>
+              <th>Applied</th>
+              <th>Resume</th>
+              <th class="text-end">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for a in applications %}
+              <tr>
+                <td>
+                  <div class="fw-semibold">{{ a.job.title }}</div>
+                  <div class="subtle small">Employer: {{ a.job.employer.username }}</div>
+                </td>
+
+                <td>
+                  {% if a.status == "accepted" %}
+                    <span class="badge text-bg-success">Accepted</span>
+                  {% elif a.status == "rejected" %}
+                    <span class="badge text-bg-danger">Rejected</span>
+                  {% else %}
+                    <span class="badge text-bg-secondary">Pending</span>
+                  {% endif %}
+                </td>
+
+                <td class="subtle">
+                  {% if a.applied_at %}{{ a.applied_at|date:"Y-m-d H:i" }}{% else %}-{% endif %}
+                </td>
+
+                <td>
+                  {% if a.resume %}
+                    <a class="btn btn-sm btn-outline-primary" href="{% url 'applications:download-resume' a.resume.pk %}">
+                      <i class="bi bi-download me-1"></i> Download
+                    </a>
+                  {% else %}
+                    <span class="text-muted">No resume</span>
+                  {% endif %}
+                </td>
+
+                <td class="text-end">
+                  <a class="btn btn-sm btn-outline-secondary" href="{% url 'jobs:job-detail' a.job.pk %}">
+                    View job
+                  </a>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="5" class="text-muted text-center py-5">
+                  <div class="empty-state mx-auto"><i class="bi bi-kanban"></i></div>
+                  <div class="fw-bold mt-2">No applications yet</div>
+                  <div class="subtle mb-3">Find a job you like and apply with your resume.</div>
+                  <a class="btn btn-primary" href="{% url 'jobs:job-list' %}">Browse jobs</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

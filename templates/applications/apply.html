@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Apply{% endblock %}
+{% block content %}
+
+<div class="container-narrow mx-auto">
+  <div class="hero hero-compact mb-3">
+    <div>
+      <div class="subtle small mb-1"><i class="bi bi-send me-1"></i> Application</div>
+      <h1 class="h4 mb-1">Apply to: {{ job.title }}</h1>
+      <div class="subtle">Choose your resume and add a short cover letter.</div>
+    </div>
+    <a class="btn btn-outline-secondary d-none d-md-inline-flex" href="{% url 'jobs:job-detail' job.pk %}">
+      <i class="bi bi-arrow-left me-1"></i> Back to job
+    </a>
+  </div>
+
+  {% if error_message %}
+    <div class="alert alert-warning border-0 shadow-soft">
+      <i class="bi bi-exclamation-triangle me-2"></i>{{ error_message }}
+    </div>
+  {% endif %}
+
+  <div class="card">
+    <div class="card-body p-4 p-md-5">
+      <form method="post" class="form-shell" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger border-0 shadow-soft">
+            <i class="bi bi-x-circle me-2"></i>{{ form.non_field_errors|striptags }}
+          </div>
+        {% endif %}
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Resume</label>
+          {{ form.resume }}
+          <div class="text-danger small mt-1">{{ form.resume.errors|striptags }}</div>
+          <div class="subtle small mt-1">
+            Don’t see a resume? <a href="{% url 'applications:upload-resume' %}" class="fw-semibold">Upload one</a>.
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Cover letter</label>
+          {{ form.cover_letter }}
+          <div class="text-danger small mt-1">{{ form.cover_letter.errors|striptags }}</div>
+          <div class="subtle small mt-1">Keep it brief, specific, and professional.</div>
+        </div>
+
+        <div class="d-flex gap-2 flex-wrap">
+          <button class="btn btn-success" type="submit">
+            <i class="bi bi-send-check me-1"></i> Send Application
+          </button>
+          <a href="{% url 'jobs:job-detail' job.pk %}" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

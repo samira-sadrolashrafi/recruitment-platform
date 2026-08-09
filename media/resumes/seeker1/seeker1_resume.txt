@@ -1,0 +1,3 @@
+Name: Seeker1
+Skills: Django, Python
+

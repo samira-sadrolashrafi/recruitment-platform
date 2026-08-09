@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Upload Resume{% endblock %}
+{% block content %}
+
+<div class="container-narrow mx-auto">
+  <div class="hero hero-compact mb-3">
+    <div>
+      <div class="subtle small mb-1"><i class="bi bi-upload me-1"></i> Resume</div>
+      <h1 class="h4 mb-1">Upload Resume</h1>
+      <div class="subtle">Allowed: pdf, doc, docx, txt (max 5MB).</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body p-4 p-md-5">
+      <form method="post" enctype="multipart/form-data" class="form-shell">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Choose file</label>
+          {{ form.file }}
+          <div class="text-danger small mt-1">{{ form.file.errors|striptags }}</div>
+        </div>
+
+        <div class="d-flex gap-2 flex-wrap">
+          <button class="btn btn-primary" type="submit">
+            <i class="bi bi-cloud-arrow-up me-1"></i> Upload
+          </button>
+          <a class="btn btn-outline-secondary" href="{% url 'applications:resume-list' %}">
+            Back
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

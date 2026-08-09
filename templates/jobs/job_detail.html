@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}{{ object.title }}{% endblock %}
+{% block content %}
+
+<div class="container-narrow mx-auto">
+  <div class="page-title">
+    <div>
+      <h1 class="h4">{{ object.title }}</h1>
+      <div class="subtle">
+        <i class="bi bi-building me-1"></i><strong>{{ object.employer.username }}</strong>
+        {% if object.created_at %} • <i class="bi bi-calendar3 me-1"></i>{{ object.created_at|date:"Y-m-d" }}{% endif %}
+      </div>
+    </div>
+
+    <div class="d-flex gap-2 flex-wrap">
+      <a class="btn btn-outline-secondary" href="{% url 'jobs:job-list' %}">
+        <i class="bi bi-arrow-left me-1"></i> Back
+      </a>
+
+      {% if user.is_authenticated and not user.is_employer %}
+        <a class="btn btn-primary" href="{% url 'applications:apply' object.pk %}">
+          <i class="bi bi-send me-1"></i> Apply
+        </a>
+      {% endif %}
+
+      {% if user.is_authenticated and user == object.employer %}
+        <a class="btn btn-outline-secondary" href="{% url 'jobs:job-edit' object.pk %}">Edit</a>
+        <a class="btn btn-outline-danger" href="{% url 'jobs:job-delete' object.pk %}">Delete</a>
+        <a class="btn btn-outline-primary" href="{% url 'applications:applicants-list' object.pk %}">Applicants</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+            <div>
+              {% if object.is_active %}
+                <span class="badge text-bg-success"><i class="bi bi-check2-circle me-1"></i>Active</span>
+              {% else %}
+                <span class="badge text-bg-secondary">Inactive</span>
+              {% endif %}
+            </div>
+
+            {% if object.salary_min or object.salary_max %}
+              <span class="badge text-bg-primary">
+                <i class="bi bi-cash-coin me-1"></i>
+                {% if object.salary_min %}{{ object.salary_min }}{% endif %}
+                {% if object.salary_max %} - {{ object.salary_max }}{% endif %}
+              </span>
+            {% endif %}
+          </div>
+
+          <hr class="hr-soft">
+
+          <h5 class="mb-2">Description</h5>
+          <div class="subtle">{{ object.description|default:"-"|linebreaks }}</div>
+
+          <div class="row g-3 mt-1">
+            <div class="col-12 col-md-6">
+              <h5 class="mb-2">Benefits</h5>
+              <div class="subtle">{{ object.benefits|default:"-"|linebreaks }}</div>
+            </div>
+            <div class="col-12 col-md-6">
+              <h5 class="mb-2">Requirements</h5>
+              <div class="subtle">{{ object.requirements|default:"-"|linebreaks }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card glass">
+        <div class="card-body">
+          <div class="fw-bold mb-2"><i class="bi bi-info-circle me-1"></i> Job summary</div>
+          <div class="subtle small">Employer</div>
+          <div class="fw-semibold mb-2">{{ object.employer.username }}</div>
+
+          <div class="subtle small">Status</div>
+          <div class="fw-semibold mb-2">{{ object.is_active|yesno:"Active,Inactive" }}</div>
+
+          <div class="subtle small">Salary</div>
+          <div class="fw-semibold mb-3">
+            {% if object.salary_min or object.salary_max %}
+              {% if object.salary_min %}{{ object.salary_min }}{% endif %}
+              {% if object.salary_max %} - {{ object.salary_max }}{% endif %}
+            {% else %}
+              Not specified
+            {% endif %}
+          </div>
+
+          {% if user.is_authenticated and not user.is_employer %}
+            <a class="btn btn-primary w-100" href="{% url 'applications:apply' object.pk %}">
+              <i class="bi bi-send me-1"></i> Apply now
+            </a>
+            <div class="subtle small text-center mt-2">Make sure you uploaded a resume.</div>
+          {% else %}
+            <div class="subtle small">Login as seeker to apply.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

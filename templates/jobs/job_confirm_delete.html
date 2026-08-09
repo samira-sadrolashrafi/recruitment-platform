@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Delete: {{ object.title }}{% endblock %}
+{% block content %}
+
+<div class="container-narrow mx-auto">
+  <div class="card border-0 shadow-soft delete-card">
+    <div class="card-body p-4 p-md-5">
+      <div class="d-flex align-items-start gap-3">
+        <div class="danger-icon"><i class="bi bi-exclamation-octagon-fill"></i></div>
+        <div class="flex-grow-1">
+          <h1 class="h4 mb-1">Delete job</h1>
+          <div class="subtle mb-3">
+            You are about to delete: <strong>{{ object.title }}</strong>
+          </div>
+          <div class="alert alert-warning border-0">
+            This action can’t be undone. Applicants and references will be removed.
+          </div>
+
+          <form method="post" class="d-flex gap-2 flex-wrap">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">
+              <i class="bi bi-trash3 me-1"></i> Yes, delete
+            </button>
+            <a class="btn btn-outline-secondary" href="{% url 'jobs:job-detail' object.pk %}">
+              Cancel
+            </a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

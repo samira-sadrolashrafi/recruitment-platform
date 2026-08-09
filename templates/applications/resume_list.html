@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}My Resumes{% endblock %}
+{% block content %}
+
+<div class="container-narrow mx-auto">
+  <div class="page-title">
+    <div>
+      <h1 class="h4">My Resumes</h1>
+      <div class="subtle">Upload once, apply faster.</div>
+    </div>
+    <a class="btn btn-primary" href="{% url 'applications:upload-resume' %}">
+      <i class="bi bi-upload me-1"></i> Upload New
+    </a>
+  </div>
+
+  <div class="card">
+    <div class="card-body p-0">
+      {% if resumes %}
+        {% for r in resumes %}
+          <div class="resume-row">
+            <div class="d-flex align-items-start gap-3">
+              <div class="file-ico"><i class="bi bi-file-earmark-text"></i></div>
+              <div class="flex-grow-1">
+                <div class="fw-semibold">{{ r.file.name }}</div>
+                <div class="subtle small">
+                  <i class="bi bi-clock me-1"></i>Uploaded: {{ r.uploaded_at|date:"Y-m-d H:i" }}
+                </div>
+              </div>
+              <a class="btn btn-sm btn-outline-primary" href="{% url 'applications:download-resume' r.pk %}">
+                <i class="bi bi-download me-1"></i> Download
+              </a>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="p-4 text-center">
+          <div class="empty-state mx-auto"><i class="bi bi-file-earmark-plus"></i></div>
+          <div class="fw-bold mt-2">No resumes yet</div>
+          <div class="subtle mb-3">Upload your resume to apply in seconds.</div>
+          <a class="btn btn-primary" href="{% url 'applications:upload-resume' %}">Upload resume</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

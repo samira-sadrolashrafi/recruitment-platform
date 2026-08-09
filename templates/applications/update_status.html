@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Update Application{% endblock %}
+{% block content %}
+
+<div class="container-narrow mx-auto">
+  <div class="page-title">
+    <div>
+      <h1 class="h4">Update application</h1>
+      <div class="subtle">
+        <strong>{{ application.applicant.username }}</strong> → <strong>{{ application.job.title }}</strong>
+      </div>
+    </div>
+    <a class="btn btn-outline-secondary" href="{% url 'applications:applicants-list' application.job.pk %}">
+      <i class="bi bi-arrow-left me-1"></i> Back
+    </a>
+  </div>
+
+  <div class="card">
+    <div class="card-body p-4">
+      <div class="d-flex flex-wrap gap-2 mb-3">
+        <span class="pill">
+          Status:
+          {% if application.status == "accepted" %}
+            <span class="badge text-bg-success">Accepted</span>
+          {% elif application.status == "rejected" %}
+            <span class="badge text-bg-danger">Rejected</span>
+          {% else %}
+            <span class="badge text-bg-secondary">Pending</span>
+          {% endif %}
+        </span>
+
+        {% if application.applied_at %}
+          <span class="pill"><i class="bi bi-clock"></i> Applied: {{ application.applied_at|date:"Y-m-d H:i" }}</span>
+        {% endif %}
+
+        {% if application.interview_date %}
+          <span class="pill"><i class="bi bi-calendar-event"></i> Interview: {{ application.interview_date|date:"Y-m-d H:i" }}</span>
+        {% endif %}
+      </div>
+
+      <form method="post" class="row g-3 form-shell">
+        {% csrf_token %}
+
+        <div class="col-12">
+          <label class="form-label fw-semibold">Interview datetime (optional)</label>
+          <input class="form-control" type="datetime-local" name="interview_date"
+                 value="{{ application.interview_date|date:'Y-m-d\\TH:i' }}">
+          <div class="subtle small mt-1">Leave empty to clear interview date.</div>
+        </div>
+
+        <div class="col-12 d-flex gap-2 flex-wrap">
+          <button class="btn btn-success" name="action" value="accept" type="submit">
+            <i class="bi bi-check2-circle me-1"></i> Accept
+          </button>
+          <button class="btn btn-danger" name="action" value="reject" type="submit">
+            <i class="bi bi-x-circle me-1"></i> Reject
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,58 @@
+{% if is_paginated %}
+  {% with q=request.GET.q title=request.GET.title benefits=request.GET.benefits smin=request.GET.salary_min smax=request.GET.salary_max %}
+  <nav aria-label="Pagination" class="mt-4">
+    <ul class="pagination justify-content-center pagination-modern">
+
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if title %}&title={{ title }}{% endif %}{% if benefits %}&benefits={{ benefits }}{% endif %}{% if smin %}&salary_min={{ smin }}{% endif %}{% if smax %}&salary_max={{ smax }}{% endif %}">
+            <i class="bi bi-chevron-left"></i>
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link"><i class="bi bi-chevron-left"></i></span></li>
+      {% endif %}
+
+      {% if page_obj.number|add:-2 > 1 %}
+        <li class="page-item">
+          <a class="page-link" href="?page=1{% if q %}&q={{ q }}{% endif %}{% if title %}&title={{ title }}{% endif %}{% if benefits %}&benefits={{ benefits }}{% endif %}{% if smin %}&salary_min={{ smin }}{% endif %}{% if smax %}&salary_max={{ smax }}{% endif %}">1</a>
+        </li>
+        <li class="page-item disabled"><span class="page-link">…</span></li>
+      {% endif %}
+
+      {% for num in page_obj.paginator.page_range %}
+        {% if num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
+          <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+            <a class="page-link" href="?page={{ num }}{% if q %}&q={{ q }}{% endif %}{% if title %}&title={{ title }}{% endif %}{% if benefits %}&benefits={{ benefits }}{% endif %}{% if smin %}&salary_min={{ smin }}{% endif %}{% if smax %}&salary_max={{ smax }}{% endif %}">
+              {{ num }}
+            </a>
+          </li>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.number|add:2 < page_obj.paginator.num_pages %}
+        <li class="page-item disabled"><span class="page-link">…</span></li>
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if q %}&q={{ q }}{% endif %}{% if title %}&title={{ title }}{% endif %}{% if benefits %}&benefits={{ benefits }}{% endif %}{% if smin %}&salary_min={{ smin }}{% endif %}{% if smax %}&salary_max={{ smax }}{% endif %}">
+            {{ page_obj.paginator.num_pages }}
+          </a>
+        </li>
+      {% endif %}
+
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if title %}&title={{ title }}{% endif %}{% if benefits %}&benefits={{ benefits }}{% endif %}{% if smin %}&salary_min={{ smin }}{% endif %}{% if smax %}&salary_max={{ smax }}{% endif %}">
+            <i class="bi bi-chevron-right"></i>
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link"><i class="bi bi-chevron-right"></i></span></li>
+      {% endif %}
+
+    </ul>
+    <div class="text-center subtle small mt-2">
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </div>
+  </nav>
+  {% endwith %}
+{% endif %}
